@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <base href="/HelpDesk/">
+    <link rel="stylesheet" type="text/css" href="assets/css/login/login.css">
+    <link rel="icon" href="assets/img/public/ICO.ico" type="image/x-icon">
+
+    <title>Acceso | HelpDesk</title>
+</head>
+<body>
+    <div id="loader-container" class="loader-container">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <h2 class="loader-title">Autenticando</h2>
+            <p class="loader-text">Conectando con el servidor...</p>
+        </div>
+    </div>
+
+    <main class="login-wrapper">
+        <div class="glass-card">
+            
+            <section class="info-section">
+                <img class="logo" src="assets/img/public/LOGOTIPO.png" alt="HelpDesk Logo">
+                <h1 class="brand-title">HelpDesk</h1>
+                <p class="brand-desc">Plataforma ágil para reportar fallas técnicas o incidentes en sucursales, garantizando una solución rápida y seguimiento en tiempo real.</p>
+            </section>
+
+            <section class="form-section">
+                <form id="loginForm" class="login-form" method="post">
+                    <div class="form-header">
+                        <h2>Bienvenido de vuelta</h2>
+                        <p>Inicia sesión para acceder a tu panel</p>
+                    </div>
+
+                    <div class="input-group">
+                        <i class='bx bx-user'></i>
+                        <input type="text" name="usern" id="usern" placeholder="Nombre de usuario" required autocomplete="off">
+                    </div>
+
+                    <div class="input-group">
+                        <i class='bx bx-lock-alt'></i>
+                        <input type="password" name="pass" id="pass" placeholder="Contraseña" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        Ingresar <i class='bx bx-right-arrow-alt'></i>
+                    </button>
+                </form>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loader = document.getElementById('loader-container');
+            loader.style.display = 'flex'; 
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('db/login/log.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect || '../../pages/usr/user/index.php';
+                } else {
+                    loader.style.display = 'none';
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de acceso',
+                        text: data.error || 'Credenciales incorrectas',
+                        background: '#121212',
+                        color: '#ffffff',
+                        iconColor: '#ff4757',
+                        confirmButtonColor: '#ff4757',
+                        confirmButtonText: 'Reintentar',
+                        customClass: { popup: 'swal-custom-glass' },
+                        heightAuto: false
+                    });
+                }
+            } catch (error) {
+                loader.style.display = 'none';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: 'No se pudo contactar al servidor.',
+                    background: '#121212',
+                    color: '#ffffff',
+                    confirmButtonColor: '#ff4757',
+                    heightAuto: false
+                });
+            }
+        });
+    </script>
+</body>
+</html>

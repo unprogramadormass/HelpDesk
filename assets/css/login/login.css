@@ -1,0 +1,289 @@
+/* =========================================
+   RESETEO Y VARIABLES (TEMA AZUL)
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+:root {
+    --primary-color: #2563eb; /* Azul tecnológico principal */
+    --primary-hover: #3b82f6; /* Azul más claro para el hover */
+    --glass-bg: rgba(15, 20, 30, 0.45); /* Cristal oscuro base */
+    --glass-border: rgba(255, 255, 255, 0.1); /* Borde sutil del cristal */
+    --text-main: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+}
+
+/* =========================================
+   FONDO Y CONTENEDOR PRINCIPAL
+   ========================================= */
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url("../../img/BAK-logo.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+/* Capa oscurecedora para resaltar la tarjeta principal */
+body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(4, 18, 36, 0.6) 100%);
+    z-index: 0;
+}
+
+.login-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+}
+
+/* =========================================
+   LA TARJETA DE CRISTAL (GLASSMORPHISM)
+   ========================================= */
+.glass-card {
+    display: flex;
+    flex-wrap: wrap;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* =========================================
+   SECCIÓN IZQUIERDA (INFO DE LA MARCA)
+   ========================================= */
+.info-section {
+    flex: 1;
+    min-width: 300px;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.05); /* Divisor sutil */
+}
+
+.logo {
+    width: 180px;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.brand-title {
+    color: var(--text-main);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.brand-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 320px;
+}
+
+/* =========================================
+   SECCIÓN DERECHA (FORMULARIO DE LOGIN)
+   ========================================= */
+.form-section {
+    flex: 1;
+    min-width: 300px;
+    padding: 50px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.15); /* Oscurece ligeramente esta mitad */
+}
+
+.login-form {
+    width: 100%;
+    max-width: 350px;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.form-header h2 {
+    color: var(--text-main);
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   INPUTS Y CAMPOS DE TEXTO
+   ========================================= */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); /* Resplandor azul */
+}
+
+.input-group input:focus + i,
+.input-group input:not(:placeholder-shown) ~ i {
+    color: var(--primary-color); /* El icono se pinta de azul al escribir */
+}
+
+/* =========================================
+   BOTÓN DE ACCESO
+   ========================================= */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); /* Sombra azulada */
+}
+
+.btn-submit:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); /* Sombra más fuerte al pasar el mouse */
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+/* =========================================
+   PANTALLA DE CARGA (LOADER)
+   ========================================= */
+.loader-container {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 10, 20, 0.85); /* Fondo oscuro general */
+    display: none; /* Controlado por JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+}
+
+.loader-content {
+    text-align: center;
+    color: var(--text-main);
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid var(--primary-color); /* Animación de carga azul */
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loader-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.loader-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* =========================================
+   ESTILOS PERSONALIZADOS PARA SWEETALERT
+   ========================================= */
+.swal-custom-glass {
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* =========================================
+   DISEÑO RESPONSIVE (MÓVILES Y TABLETS)
+   ========================================= */
+@media screen and (max-width: 768px) {
+    .glass-card {
+        flex-direction: column;
+    }
+    
+    .info-section {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Divisor horizontal para móviles */
+        padding: 40px 20px;
+    }
+
+    .form-section {
+        padding: 40px 20px;
+    }
+    
+    .brand-title {
+        font-size: 1.8rem;
+    }
+}

@@ -1,0 +1,189 @@
+/* Estilos para la sección de reportes */
+.reports-header {
+    margin-bottom: 30px;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-top: 5px;
+}
+
+/* Tarjetas de reportes */
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.report-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.report-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.report-header i {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.report-description {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Layout de contenido de reportes */
+.report-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.filters-section,
+.options-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-range span {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Opciones de reporte */
+.report-options {
+    margin-bottom: 0;
+}
+
+.option-group {
+    margin-bottom: 0;
+}
+
+.option-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Botones de reporte */
+.report-button {
+    width: 100%;
+    justify-content: center;
+    margin-top: auto;
+}
+
+/* Campos de formulario */
+.form-inputr {
+    width: 145px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-inputr:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .report-content-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .date-range {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .date-range span {
+        text-align: center;
+        margin: 5px 0;
+    }
+    
+    .form-inputr {
+        width: 100%;
+    }
+}

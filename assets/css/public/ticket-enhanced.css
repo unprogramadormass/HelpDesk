@@ -1,0 +1,106 @@
+/* Estilos mejorados para el sistema de tickets */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.comments-stats {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.comment-item {
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.comment-item.new-comment {
+    border-left-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.evidence-item {
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.evidence-item:hover {
+    transform: translateY(-2px);
+}
+
+.evidence-name {
+    font-size: 0.75rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    word-break: break-word;
+}
+
+.evidence-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    background: var(--card-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    color: var(--text-muted);
+}
+
+.evidence-placeholder.pdf {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.evidence-placeholder.video {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+/* Animaciones */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.comment-item {
+    animation: slideInUp 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .page-content {
+        flex-direction: column;
+    }
+    
+    .left-panel,
+    .right-panel {
+        width: 100%;
+    }
+}

@@ -1,0 +1,2 @@
+# Desactivar el listado de directorios por seguridad
+Options -Indexes
