@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-03-2026 a las 07:14:14
+-- Tiempo de generación: 03-03-2026 a las 17:05:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -38,13 +38,7 @@ CREATE TABLE `areas` (
 --
 
 INSERT INTO `areas` (`id`, `nombre`, `fecha_creacion`) VALUES
-(1, 'Sistema', '2025-12-09 00:18:05'),
-(2, 'Recursos Humanos', '2025-12-09 01:04:11'),
-(3, 'Gerencia', '2026-02-28 00:17:20'),
-(4, 'Supervisor', '2026-02-28 00:17:33'),
-(5, 'Cajas', '2026-02-28 00:17:40'),
-(6, 'Credito', '2026-02-28 00:17:48'),
-(7, 'Captacion', '2026-02-28 00:17:53');
+(1, 'Sistema', '2025-12-09 00:18:05');
 
 -- --------------------------------------------------------
 
@@ -69,65 +63,6 @@ INSERT INTO `estados_usuario` (`id`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `incidencias_cat_1`
---
-
-CREATE TABLE `incidencias_cat_1` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `tiempo_resolucion` int(11) NOT NULL DEFAULT 0,
-  `prioridad` enum('Baja','Media','Alta','Crítica') NOT NULL DEFAULT 'Baja',
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `incidencias_cat_1`
---
-
-INSERT INTO `incidencias_cat_1` (`id`, `nombre`, `tiempo_resolucion`, `prioridad`, `fecha_creacion`) VALUES
-(1, 'Ajuste de Ficha', 5, 'Alta', '2025-12-09 17:52:22'),
-(2, 'No break dañado', 10, 'Media', '2025-12-09 17:53:17'),
-(3, 'Monitor apagado (No se ve nada)', 10, 'Media', '2025-12-09 18:15:23');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `incidencias_cat_2`
---
-
-CREATE TABLE `incidencias_cat_2` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `tiempo_resolucion` int(11) NOT NULL DEFAULT 0,
-  `prioridad` enum('Baja','Media','Alta','Crítica') NOT NULL DEFAULT 'Baja',
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `incidencias_cat_2`
---
-
-INSERT INTO `incidencias_cat_2` (`id`, `nombre`, `tiempo_resolucion`, `prioridad`, `fecha_creacion`) VALUES
-(1, 'No break dañado', 10, 'Media', '2025-12-09 17:53:17'),
-(2, 'Monitor apagado (No se ve nada)', 10, 'Media', '2025-12-09 18:15:23');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `incidencias_cat_3`
---
-
-CREATE TABLE `incidencias_cat_3` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `tiempo_resolucion` int(11) NOT NULL DEFAULT 0,
-  `prioridad` enum('Baja','Media','Alta','Crítica') NOT NULL DEFAULT 'Baja',
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `niveles_incidencias`
 --
 
@@ -137,15 +72,6 @@ CREATE TABLE `niveles_incidencias` (
   `nombre_tabla_db` varchar(150) NOT NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `niveles_incidencias`
---
-
-INSERT INTO `niveles_incidencias` (`id`, `nombre_mostrar`, `nombre_tabla_db`, `fecha_creacion`) VALUES
-(1, 'Cajas', 'incidencias_cat_1', '2025-12-09 02:04:26'),
-(2, 'Operativo', 'incidencias_cat_2', '2025-12-09 02:17:43'),
-(3, 'Externos', 'incidencias_cat_3', '2026-01-07 18:30:10');
 
 -- --------------------------------------------------------
 
@@ -160,17 +86,6 @@ CREATE TABLE `pendientes` (
   `estado` enum('pendiente','completada','eliminada') NOT NULL DEFAULT 'pendiente',
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `pendientes`
---
-
-INSERT INTO `pendientes` (`id`, `usuario_id`, `descripcion`, `estado`, `fecha_creacion`) VALUES
-(1, 2, 'ff', 'eliminada', '2026-02-27 15:29:02'),
-(2, 2, 'w', 'pendiente', '2026-02-27 15:30:07'),
-(3, 2, 'D', 'pendiente', '2026-02-28 01:07:14'),
-(4, 2, 'D', 'pendiente', '2026-02-28 01:07:17'),
-(5, 2, 'D', 'pendiente', '2026-02-28 01:07:21');
 
 -- --------------------------------------------------------
 
@@ -212,10 +127,7 @@ CREATE TABLE `puesto` (
 --
 
 INSERT INTO `puesto` (`id`, `nombre`, `fecha_creacion`) VALUES
-(1, 'Auxiliar', '2025-12-09 01:07:08'),
-(2, 'Gerente', '2025-12-09 01:16:27'),
-(3, 'Supervisor', '2026-02-28 00:18:03'),
-(4, 'Jefe', '2026-02-28 00:18:13');
+(1, 'Auxiliar', '2025-12-09 01:07:08');
 
 -- --------------------------------------------------------
 
@@ -265,25 +177,18 @@ CREATE TABLE `sesiones_activas` (
 --
 
 INSERT INTO `sesiones_activas` (`id`, `usuario_id`, `token_sesion`, `ip_address`, `dispositivo`, `user_agent`, `ubicacion`, `ultimo_acceso`, `activo`) VALUES
-(82, 1, 'ji8rak77tta435r0bpdub0h4f6', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-02-28 03:33:59', 0),
-(83, 1, 'imnglutmh657ruublc7act4j34', '127.0.0.1', 'Móvil', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', 'Localhost (Dev)', '2026-02-28 04:06:32', 0),
-(84, 2, 'iipmigpf20n5grismb805m8956', '192.168.0.108', 'Móvil', 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_3_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/145.0.7632.108 Mobile/15E148 Safari/604.1', 'Ubicación Desconocida', '2026-02-28 03:54:58', 1),
-(85, 1, '4he38qmcc7lvmeb2l5k6ggsoq8', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-02-28 04:30:01', 0),
-(86, 9, 'cequ4gl4kp7589af779f38l6dd', '127.0.0.1', 'Móvil', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', 'Localhost (Dev)', '2026-02-28 07:15:29', 0),
-(87, 9, 'agm2h7sdso20uihfnug7mrdeu0', '127.0.0.1', 'Móvil', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', 'Localhost (Dev)', '2026-02-28 07:18:54', 0),
-(88, 9, 'lmr7ih8rj2gr2d0std8knv36jm', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-02-28 07:23:42', 0),
-(89, 9, 'jn5d2mnsv7clg6o5f76gejomku', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-02-28 07:26:13', 0),
-(90, 9, '021e4ivev6ddgjf62sp8asgi4t', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-02-28 07:29:16', 0),
-(91, 9, '9j807bq66qanhqs5pmakg69fo3', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-02-28 07:33:17', 0),
-(92, 9, 'fenavi9mjk44hq9kamnsgsramd', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 03:36:36', 0),
-(93, 9, 'qed6likuj8vg2o1id0nqukqnrf', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 04:16:37', 0),
-(94, 9, 'o7salg4tvnkhr35u8rbbvdt02e', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 04:32:03', 0),
-(95, 9, '3efea2lnupddp1ffc7ut7jp2dv', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 04:36:29', 0),
-(96, 9, 'h315sgcp7bo46rc7m306otimnn', '127.0.0.1', 'Móvil', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', 'Localhost (Dev)', '2026-03-02 04:52:58', 0),
-(97, 9, 'tgo456vqaj1rkj0p2f5ev9ahta', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 05:51:09', 0),
-(98, 2, 'viv3ksvo4gi1f2hopasaujnnfh', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 06:00:54', 0),
-(99, 2, 'd4jq9g8ak37jr6po9d2nbjjd63', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 06:02:12', 0),
-(100, 1, '1ergeh2k8cq4arle0rvpbirqkc', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 06:02:50', 1);
+(1, 1, 'rd3g5j1pud0o5kji0r1kg3tl7l', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 16:56:47', 0),
+(2, 1, 'n0v5tii6f26550cuc2ulefkspm', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:07:03', 0),
+(3, 1, '33darlhgernjj45utqs2d52u1p', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:07:00', 0),
+(4, 1, '867ds83i0c9qf1uusnkgalkqan', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:06:57', 0),
+(5, 1, '0bpi1qgr3tp5cfampu87bu26ff', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:06:54', 0),
+(6, 1, 'nfl6sep9tuqqndt3c8ldqgkuvg', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 17:07:43', 0),
+(7, 1, 'jts4v2al1gnpeqgkh1mj43q83g', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 17:15:46', 0),
+(8, 1, '4n5efij5f475fc08pmgrir81q4', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 17:21:47', 0),
+(9, 1, 'll3jqfsm8psfgcgpf2bcducthf', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 20:30:33', 0),
+(10, 1, 'cd0jsamoefej5v8ss7b2pfbtui', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:07:08', 0),
+(11, 1, 'hllopor7duj1k66n707nkhu7bl', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-03 00:09:34', 0),
+(12, 1, 'r4qvdsb2udffj83pf5uckeqh3r', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-03 00:09:50', 1);
 
 -- --------------------------------------------------------
 
@@ -306,10 +211,7 @@ CREATE TABLE `sucursales` (
 --
 
 INSERT INTO `sucursales` (`id`, `nombre`, `folio`, `direccion`, `telefono`, `fecha_creacion`, `estatus`) VALUES
-(1, 'Corporativo', '100', 'C. Josefa Ortiz de Domínguez 3008, Libertad, 44750 Guadalajara, Jal.', '+52 33 3883 1830', '2025-12-05 23:47:57', 'OPERATIVA'),
-(2, 'Matriz', '1', 'C. Josefa Ortiz de Domínguez 3008, Libertad, 44750 Guadalajara, Jal.', '+52 33 3883 1830', '2025-12-06 00:10:29', 'CERRADA'),
-(3, 'Zalatitán', '2', 'Av. Zalatitan 370, Colonia Alameda de Zalatitán, 45407 Tonalá, Jal.', '+52 33 3607 3717', '2025-12-06 00:34:54', 'OPERATIVA'),
-(4, 'San Pedrito', '4', 'Poza Rica 4932, San Pedrito, 45625 San Pedro Tlaquepaque, Jal.', '+52 33 3600 3162', '2025-12-06 01:06:36', 'OPERATIVA');
+(1, 'Corporativo', '100', 'C. Josefa Ortiz de Domínguez 3008, Libertad, 44750 Guadalajara, Jal.', '+52 33 3883 1830', '2025-12-05 23:47:57', 'OPERATIVA');
 
 -- --------------------------------------------------------
 
@@ -338,21 +240,6 @@ CREATE TABLE `ticket` (
   `fecha_ultima_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `fecha_cierre` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `ticket`
---
-
-INSERT INTO `ticket` (`id`, `folio`, `usuario_creador_id`, `sucursal_id`, `area_id`, `titulo`, `descripcion`, `evidence`, `prioridad`, `estado`, `nivel_incidencia_id`, `agente_actual_id`, `fecha_asignacion`, `agente_anterior_id`, `fecha_reasignacion`, `motivo_reasignacion`, `fecha_creacion`, `fecha_ultima_actualizacion`, `fecha_cierre`) VALUES
-(1, '#TCK-1', 2, 1, 2, 'No break dañado', 'gg', NULL, 'Baja', 'Abierto', 2, 1, '2026-01-09 09:12:11', NULL, NULL, NULL, '2026-01-09 15:13:12', '2026-02-28 01:12:51', NULL),
-(2, '#TCK-2', 2, 1, 2, 'Monitor apagado (No se ve nada)', 'sdfdf', NULL, 'Media', 'Asignado', 2, 9, '2026-03-01 22:17:15', NULL, NULL, NULL, '2026-02-28 00:13:44', '2026-03-02 04:17:15', NULL),
-(3, '#TCK-3', 2, 1, 3, 'Monitor apagado (No se ve nada)', 'PRUEBA', '', 'Alta', 'En Proceso', 2, NULL, NULL, NULL, NULL, NULL, '2026-02-28 00:56:39', '2026-02-28 01:12:58', NULL),
-(4, '#TCK-4', 2, 1, 7, 'Monitor apagado (No se ve nada)', 'RR', '[\"evidencia_1772240335_69a23dcf3d313.png\"]', 'Crítica', 'Espera', 2, NULL, NULL, NULL, NULL, NULL, '2026-02-28 00:58:55', '2026-02-28 01:13:02', NULL),
-(5, '#TCK-5', 2, 1, 3, 'Monitor apagado (No se ve nada)', 'fff', '[\"evidencia_1772241058_69a240a2ceb59.jpeg\"]', 'Baja', 'Asignado', 2, 1, '2026-02-27 20:46:25', NULL, NULL, NULL, '2026-02-28 01:10:58', '2026-02-28 02:47:46', NULL),
-(6, '#TCK-6', 2, 1, 4, 'No break dañado', 'ff', '[\"evidencia_1772241073_69a240b156c66.jpg\"]', 'Media', 'Cerrado', 2, 8, '2026-03-01 22:00:16', 9, NULL, NULL, '2026-02-28 01:11:13', '2026-03-02 05:38:10', '2026-03-02 06:38:10'),
-(7, '#TCK-7', 2, 1, 4, 'No break dañado', 'PRUEBA CONTEO DASHBOARD', '[\"evidencia_1772250975_69a2675fb8520.jpeg\"]', 'Media', 'Asignado', 2, 9, '2026-03-01 22:40:56', NULL, NULL, NULL, '2026-02-28 03:56:15', '2026-03-02 04:40:56', NULL),
-(8, '#TCK-8', 2, 1, 6, 'Monitor apagado (No se ve nada)', 'fsvfv', NULL, 'Media', 'Resuelto', 2, 9, '2026-03-01 22:53:17', NULL, NULL, NULL, '2026-02-28 04:06:00', '2026-03-02 05:38:57', '2026-03-02 06:38:57'),
-(9, '#TCK-9', 2, 1, 7, 'No break dañado', 'd', NULL, 'Media', 'Asignado', 2, 8, '2026-03-01 23:00:19', 9, NULL, NULL, '2026-02-28 04:07:07', '2026-03-02 05:28:35', NULL);
 
 --
 -- Disparadores `ticket`
@@ -394,44 +281,6 @@ CREATE TABLE `ticket_historial` (
   `vista` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `ticket_historial`
---
-
-INSERT INTO `ticket_historial` (`id`, `ticket_id`, `usuario_responsable_id`, `tipo_movimiento`, `descripcion_evento`, `fecha_movimiento`, `vista`) VALUES
-(1, 1, 1, 'Actualización', 'Actualización: Estado: En Proceso', '2026-01-10 16:21:26', 1),
-(2, 1, 1, 'Actualización', 'Actualización: Estado: Cerrado', '2026-01-10 16:21:35', 1),
-(3, 1, 1, 'Comentario', 'HH', '2026-01-10 16:22:17', 1),
-(4, 1, 1, 'Actualización', 'Actualización: Estado: Espera', '2026-01-10 18:03:40', 1),
-(5, 1, 1, 'Actualización', 'Actualización: Estado: Resuelto', '2026-01-10 18:03:47', 1),
-(6, 1, 1, 'Actualización', 'Modificación de gestión', '2026-01-10 18:04:27', 1),
-(7, 1, 1, 'Actualización', 'Modificación de gestión', '2026-01-10 18:04:32', 1),
-(8, 1, 1, 'Actualización', 'Actualización: Prioridad: Crítica', '2026-01-10 18:13:57', 1),
-(9, 1, 1, 'Actualización', 'Actualización: Prioridad: Media', '2026-01-10 18:22:19', 1),
-(10, 1, 1, 'Actualización', 'Actualización: Estado: En Proceso', '2026-02-25 17:22:08', 1),
-(11, 1, 1, 'Actualización', 'Actualización: Estado: Cancelado', '2026-02-25 17:22:45', 1),
-(12, 2, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 2.', '2026-02-28 00:13:44', 1),
-(13, 3, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 3.', '2026-02-28 00:56:39', 0),
-(14, 4, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 7.', '2026-02-28 00:58:55', 0),
-(15, 5, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 3.', '2026-02-28 01:10:58', 1),
-(16, 6, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 4.', '2026-02-28 01:11:13', 1),
-(17, 5, 1, 'Asignación', 'Ticket asignado a agente ID: 1', '2026-02-28 02:46:25', 1),
-(18, 5, 1, 'Comentario', 'kiki', '2026-02-28 02:47:24', 1),
-(19, 5, 1, 'Actualización', 'Actualización: Estado: Asignado', '2026-02-28 02:47:46', 1),
-(20, 7, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 4.', '2026-02-28 03:56:15', 1),
-(21, 8, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 6.', '2026-02-28 04:06:00', 1),
-(22, 9, 2, 'Creación', 'Creación de ticket. Prioridad: Media. Área destino ID: 7.', '2026-02-28 04:07:07', 0),
-(23, 6, 9, '', 'El agente (ID: 9) ha tomado este ticket.', '2026-03-02 04:00:16', 1),
-(24, 2, 9, '', 'El agente (ID: 9) ha tomado este ticket.', '2026-03-02 04:17:15', 1),
-(25, 7, 9, '', 'El agente (ID: 9) ha tomado este ticket.', '2026-03-02 04:40:56', 1),
-(26, 8, 9, '', 'El agente (ID: 9) ha tomado este ticket.', '2026-03-02 04:53:17', 1),
-(27, 9, 9, 'Asignación', 'El agente Andres zsn ha tomado este ticket.', '2026-03-02 05:00:19', 1),
-(28, 8, 9, 'Actualización', 'Actualización: Estado: En Proceso', '2026-03-02 05:21:22', 1),
-(29, 8, 9, 'Actualización', 'Actualización: Estado: Cerrado', '2026-03-02 05:22:13', 1),
-(30, 9, 9, 'Actualización', 'Actualización: Agente reasignado', '2026-03-02 05:28:35', 1),
-(31, 6, 9, 'Actualización', 'Actualización: Agente reasignado de Andres zsn a Andres d', '2026-03-02 05:38:10', 1),
-(32, 8, 9, 'Actualización', 'Actualización: Estado: Resuelto', '2026-03-02 05:38:57', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -470,11 +319,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `folio`, `avatar`, `username`, `firstname`, `secondname`, `firstapellido`, `secondapellido`, `extension`, `email`, `celular`, `password`, `requiere_cambio_password`, `tipo_usuario`, `puesto_id`, `sucursal_id`, `estado_id`, `incidencia_id`, `noti_whatsapp`, `noti_email`, `noti_nuevo`, `noti_sistema`, `fecha_creacion`, `connected`) VALUES
-(1, '#CPSP-0001', 'user_1_1765401022.jpg', 'sistemas8', 'Andres', 'De jesus', 'Tolosa', 'Tapia', 1233, 'andres.tolosa@cajasanpablo.com', '3324879134', '$2y$10$UJrvXdeGefCJ155VvM.oNOxUyHhCK1lf6t8mYaD1Fzospm2u398wa', 0, 1, 1, 1, 1, NULL, 1, 1, 1, 1, '2025-12-09 19:11:30', 1),
-(2, '#CPSP-0002', 'user_2_1772240752.jpg', 'gerentem', 'Hector', '', 'Matriz', '', 5454, 'andres.tolosa124@gmail.com', '', '$2y$10$UJrvXdeGefCJ155VvM.oNOxUyHhCK1lf6t8mYaD1Fzospm2u398wa', 0, 4, 2, 1, 2, 2, 0, 0, 0, 0, '2026-01-09 15:11:55', 1),
-(6, '#CPSP-003', NULL, 'h', 'h', 'h', 'h', 'h', NULL, 'd', '', '$2y$10$OY13fJihF4JasNx3BjZTbe8997yOw9lJ0G4HDNRIuSPzXtgneDXx2', 1, 4, 2, 1, 1, 2, 0, 0, 0, 0, '2026-02-27 20:10:43', 0),
-(8, '#CPSP-0004', NULL, 'gg', 'Andres', 'Tolosa', 'd', '', NULL, 'unprogramadormass@gmail.com', '', '$2y$10$QG1PZ7d4CzcuHUPWJgcE0.Gbuy3NiCb/xIq8d8G.X7bGLoK/NeQaW', 1, 3, 1, 1, 1, NULL, 0, 0, 0, 0, '2026-02-28 04:09:58', 0),
-(9, '#CPSP-2147', 'user_9_1772264147.jpg', 'ggg', 'Andres', 'Tolosa', 'zsn', 'uhuhuh', 22, 'andrewwtoulouse306@gmail.com', '', '$2y$10$V12LnXiAuBJkTY4zmTwBMOpxQwxF/G8zlGr23.L9MLa5RG2MlCJAS', 0, 3, 1, 1, 1, 2, 0, 0, 1, 0, '2026-02-28 04:27:09', 1);
+(1, '#CPSP-0001', 'user_1_1765401022.jpg', 'sistemas8', 'Andres', 'De jesus', 'Tolosa', 'Tapia', 1233, 'andres.tolosa@cajasanpablo.com', '3324879134', '$2y$10$MfhjgKgdjNgbc/04JHoZoeN9DhcosnlN5A35CIDBbtjbFH8GooS5u', 0, 1, NULL, 1, 1, NULL, 1, 1, 1, 1, '2025-12-09 19:11:30', 1);
 
 --
 -- Disparadores `usuarios`
@@ -517,16 +362,7 @@ CREATE TABLE `usuario_areas` (
 --
 
 INSERT INTO `usuario_areas` (`id`, `usuario_id`, `area_id`) VALUES
-(1, 1, 1),
-(4, 6, 2),
-(5, 6, 1),
-(11, 2, 5),
-(12, 2, 7),
-(13, 2, 6),
-(14, 2, 3),
-(15, 2, 4),
-(16, 8, 1),
-(19, 9, 1);
+(1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -548,9 +384,7 @@ INSERT INTO `usuario_permisos` (`id`, `usuario_id`, `permiso_id`) VALUES
 (19, 1, 2),
 (20, 1, 3),
 (21, 1, 4),
-(22, 1, 5),
-(29, 2, 1),
-(30, 2, 2);
+(22, 1, 5);
 
 --
 -- Índices para tablas volcadas
@@ -566,24 +400,6 @@ ALTER TABLE `areas`
 -- Indices de la tabla `estados_usuario`
 --
 ALTER TABLE `estados_usuario`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `incidencias_cat_1`
---
-ALTER TABLE `incidencias_cat_1`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `incidencias_cat_2`
---
-ALTER TABLE `incidencias_cat_2`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `incidencias_cat_3`
---
-ALTER TABLE `incidencias_cat_3`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -689,7 +505,7 @@ ALTER TABLE `usuario_permisos`
 -- AUTO_INCREMENT de la tabla `areas`
 --
 ALTER TABLE `areas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `estados_usuario`
@@ -698,34 +514,16 @@ ALTER TABLE `estados_usuario`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT de la tabla `incidencias_cat_1`
---
-ALTER TABLE `incidencias_cat_1`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT de la tabla `incidencias_cat_2`
---
-ALTER TABLE `incidencias_cat_2`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `incidencias_cat_3`
---
-ALTER TABLE `incidencias_cat_3`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `niveles_incidencias`
 --
 ALTER TABLE `niveles_incidencias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `pendientes`
 --
 ALTER TABLE `pendientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
@@ -737,7 +535,7 @@ ALTER TABLE `permisos`
 -- AUTO_INCREMENT de la tabla `puesto`
 --
 ALTER TABLE `puesto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`
@@ -749,37 +547,37 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `sesiones_activas`
 --
 ALTER TABLE `sesiones_activas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `sucursales`
 --
 ALTER TABLE `sucursales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `ticket`
 --
 ALTER TABLE `ticket`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ticket_historial`
 --
 ALTER TABLE `ticket_historial`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_areas`
 --
 ALTER TABLE `usuario_areas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_permisos`
