@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-03-2026 a las 17:05:02
+-- Tiempo de generación: 03-03-2026 a las 21:31:51
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -38,7 +38,7 @@ CREATE TABLE `areas` (
 --
 
 INSERT INTO `areas` (`id`, `nombre`, `fecha_creacion`) VALUES
-(1, 'Sistema', '2025-12-09 00:18:05');
+(1, 'Sistemas', '2025-12-09 00:18:05');
 
 -- --------------------------------------------------------
 
@@ -127,7 +127,7 @@ CREATE TABLE `puesto` (
 --
 
 INSERT INTO `puesto` (`id`, `nombre`, `fecha_creacion`) VALUES
-(1, 'Auxiliar', '2025-12-09 01:07:08');
+(1, 'Gerente', '2025-12-09 01:07:08');
 
 -- --------------------------------------------------------
 
@@ -171,24 +171,6 @@ CREATE TABLE `sesiones_activas` (
   `ultimo_acceso` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `activo` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `sesiones_activas`
---
-
-INSERT INTO `sesiones_activas` (`id`, `usuario_id`, `token_sesion`, `ip_address`, `dispositivo`, `user_agent`, `ubicacion`, `ultimo_acceso`, `activo`) VALUES
-(1, 1, 'rd3g5j1pud0o5kji0r1kg3tl7l', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 16:56:47', 0),
-(2, 1, 'n0v5tii6f26550cuc2ulefkspm', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:07:03', 0),
-(3, 1, '33darlhgernjj45utqs2d52u1p', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:07:00', 0),
-(4, 1, '867ds83i0c9qf1uusnkgalkqan', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:06:57', 0),
-(5, 1, '0bpi1qgr3tp5cfampu87bu26ff', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:06:54', 0),
-(6, 1, 'nfl6sep9tuqqndt3c8ldqgkuvg', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 17:07:43', 0),
-(7, 1, 'jts4v2al1gnpeqgkh1mj43q83g', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 17:15:46', 0),
-(8, 1, '4n5efij5f475fc08pmgrir81q4', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 17:21:47', 0),
-(9, 1, 'll3jqfsm8psfgcgpf2bcducthf', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 20:30:33', 0),
-(10, 1, 'cd0jsamoefej5v8ss7b2pfbtui', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-02 21:07:08', 0),
-(11, 1, 'hllopor7duj1k66n707nkhu7bl', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-03 00:09:34', 0),
-(12, 1, 'r4qvdsb2udffj83pf5uckeqh3r', '127.0.0.1', 'PC', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'Localhost (Dev)', '2026-03-03 00:09:50', 1);
 
 -- --------------------------------------------------------
 
@@ -319,7 +301,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `folio`, `avatar`, `username`, `firstname`, `secondname`, `firstapellido`, `secondapellido`, `extension`, `email`, `celular`, `password`, `requiere_cambio_password`, `tipo_usuario`, `puesto_id`, `sucursal_id`, `estado_id`, `incidencia_id`, `noti_whatsapp`, `noti_email`, `noti_nuevo`, `noti_sistema`, `fecha_creacion`, `connected`) VALUES
-(1, '#CPSP-0001', 'user_1_1765401022.jpg', 'sistemas8', 'Andres', 'De jesus', 'Tolosa', 'Tapia', 1233, 'andres.tolosa@cajasanpablo.com', '3324879134', '$2y$10$MfhjgKgdjNgbc/04JHoZoeN9DhcosnlN5A35CIDBbtjbFH8GooS5u', 0, 1, NULL, 1, 1, NULL, 1, 1, 1, 1, '2025-12-09 19:11:30', 1);
+(1, 'UID-0001', NULL, 'Admin', 'Admin', '', '', '', NULL, 'unprogramadormass@gmail.com', NULL, '$2y$10$MfhjgKgdjNgbc/04JHoZoeN9DhcosnlN5A35CIDBbtjbFH8GooS5u', 1, 1, NULL, 1, 1, NULL, 1, 1, 1, 1, '2025-12-09 19:11:30', 1);
 
 --
 -- Disparadores `usuarios`
@@ -329,10 +311,10 @@ CREATE TRIGGER `trg_usuarios_folio` BEFORE INSERT ON `usuarios` FOR EACH ROW BEG
     DECLARE ultimo INT;
 
     SELECT 
-        CAST(SUBSTRING(folio, 7) AS UNSIGNED) -- ¡Aquí está la magia, cambiado a 7!
+        CAST(SUBSTRING(folio, 5) AS UNSIGNED) -- ¡Aquí está la magia, cambiado a 7!
     INTO ultimo
     FROM usuarios
-    WHERE folio LIKE '#CPSP-%'
+    WHERE folio LIKE 'UID-%'
     ORDER BY id DESC
     LIMIT 1;
 
@@ -340,7 +322,7 @@ CREATE TRIGGER `trg_usuarios_folio` BEFORE INSERT ON `usuarios` FOR EACH ROW BEG
         SET ultimo = 0;
     END IF;
 
-    SET NEW.folio = CONCAT('#CPSP-', LPAD(ultimo + 1, 4, '0'));
+    SET NEW.folio = CONCAT('UID-', LPAD(ultimo + 1, 4, '0'));
 END
 $$
 DELIMITER ;
@@ -381,10 +363,10 @@ CREATE TABLE `usuario_permisos` (
 --
 
 INSERT INTO `usuario_permisos` (`id`, `usuario_id`, `permiso_id`) VALUES
-(19, 1, 2),
-(20, 1, 3),
-(21, 1, 4),
-(22, 1, 5);
+(1, 1, 2),
+(2, 1, 3),
+(3, 1, 4),
+(4, 1, 5);
 
 --
 -- Índices para tablas volcadas
@@ -547,7 +529,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `sesiones_activas`
 --
 ALTER TABLE `sesiones_activas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `sucursales`
@@ -583,7 +565,7 @@ ALTER TABLE `usuario_areas`
 -- AUTO_INCREMENT de la tabla `usuario_permisos`
 --
 ALTER TABLE `usuario_permisos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
