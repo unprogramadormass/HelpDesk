@@ -1,0 +1,6 @@
+hacer funcionar los reportes con la nueva base de datos
+Agregar calificacion a los agentes (Usuario Final califica)
+agregar campo de codigo de actvacion licencia
+agregar personalizacion para habilitar y desabilitar secciones
+agregar permisos 
+algunas funciones hacer que se actualizen cada segundopara obtener datos reales en seccion de no importancia 
