@@ -171,15 +171,15 @@ async function loadBranches() {
 
             // --- LÓGICA DE BÚSQUEDA EN MAPS (TAL COMO PEDISTE) ---
             
-            // 1. Variable BASE con la marca (Caja Popular San Pablo)
-            const base = "Caja Popular San Pablo ";
+            // 1. Variable BASE con la marca (Helpdesk)
+            const base = "Helpdesk ";
 
             // 2. Limpiamos variables de la BD (quitamos espacios extra)
             const nombreSucursal = branch.nombre ? branch.nombre.trim() : ''; // Ej: "Zalatitan"
             const direccionSucursal = branch.direccion ? branch.direccion.replace(/\n/g, ' ').trim() : '';
 
             // 3. Concatenación Mágica: "Base" + "Nombre BD" + "Dirección"
-            // Resultado: "Caja Popular San Pablo Zalatitan Av. Zalatitan 370..."
+            // Resultado: "Helpdesk Zalatitan Av. Zalatitan 370..."
             const busquedaCompleta = `${base} ${nombreSucursal} ${direccionSucursal}`;
 
             // 4. Generamos la URL oficial de búsqueda de Google

@@ -84,7 +84,7 @@ function enviarCorreoActualizacion($emailDestino, $nombreUsuario, $folioTicket, 
                 <p style='font-size: 14px; color: #666; margin-top: 20px;'>Si tienes dudas, puedes consultar más detalles o agregar comentarios ingresando al sistema HelpDesk.</p>
             </div>
             <div style='background: #f1f5f9; text-align: center; padding: 15px; font-size: 12px; color: #64748b;'>
-                Este es un mensaje automático del Sistema de Tickets - Caja San Pablo
+                Este es un mensaje automático del Sistema de Tickets - HelpDesk
             </div>
         </div>";
 
