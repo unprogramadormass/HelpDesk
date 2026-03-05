@@ -3,16 +3,14 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 require_once(__DIR__ . '/../../conexion.php');
 
-// 1. Validar sesión
 if (!isset($_SESSION['id_usuario']) || !is_numeric($_SESSION['id_usuario'])) {
-    echo json_encode(['success' => false, 'message' => 'No autorizado. La sesión expiró.']);
+    echo json_encode(['success' => false, 'message' => 'No autorizado.']);
     exit;
 }
 
 $userId = intval($_SESSION['id_usuario']);
 
 try {
-    // 2. Obtener la sucursal del usuario
     $stmtUser = mysqli_prepare($conn, "SELECT sucursal_id FROM usuarios WHERE id = ?");
     mysqli_stmt_bind_param($stmtUser, "i", $userId);
     mysqli_stmt_execute($stmtUser);
@@ -24,99 +22,67 @@ try {
     }
     $sucursal_id = $userData['sucursal_id'];
 
-    // 3. Recibir los datos del formulario (POST)
     $nivel_incidencia_id = $_POST['nivel_incidencia_id'] ?? null;
     $prioridad = $_POST['prioridad'] ?? 'Baja';
     $area_id = $_POST['area_id'] ?? null; 
     $descripcion = $_POST['descripcion'] ?? '';
     $titulo = $_POST['titulo'] ?? 'Sin título'; 
 
-    if (empty($nivel_incidencia_id) || empty($area_id) || empty($descripcion)) {
-        throw new Exception("Por favor, completa todos los campos obligatorios.");
-    }
-
-    // ==========================================
-    // 4. LÓGICA SECURE DE SUBIDA DE ARCHIVOS
-    // ==========================================
     $nombres_guardados = []; 
-    
     if (isset($_FILES['evidencia']) && !empty($_FILES['evidencia']['name'][0])) {
         $uploadDir = __DIR__ . '/../../../uploads/'; 
         if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
 
-        // Lista Blanca de tickets
         $extPermitidas = ['jpg', 'jpeg', 'png', 'pdf', 'docx', 'xlsx', 'csv'];
-        $cantidad_archivos = count($_FILES['evidencia']['name']);
+        // Validación MIME para evitar RCE
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
         
-        for ($i = 0; $i < $cantidad_archivos; $i++) {
+        for ($i = 0; $i < count($_FILES['evidencia']['name']); $i++) {
             if ($_FILES['evidencia']['error'][$i] === UPLOAD_ERR_OK) {
-                
-                $nombreOriginal = $_FILES['evidencia']['name'][$i];
                 $tmpName = $_FILES['evidencia']['tmp_name'][$i];
-                $extension = strtolower(pathinfo($nombreOriginal, PATHINFO_EXTENSION));
-                
-                // VERIFICACIÓN DE SEGURIDAD (Evitar RCE)
-                if (!in_array($extension, $extPermitidas)) {
-                    throw new Exception("El archivo '$nombreOriginal' no tiene un formato permitido.");
-                }
+                $extension = strtolower(pathinfo($_FILES['evidencia']['name'][$i], PATHINFO_EXTENSION));
+                $mimeReal = finfo_file($finfo, $tmpName);
+
+                if (!in_array($extension, $extPermitidas)) throw new Exception("Formato no permitido.");
 
                 $nuevoNombre = 'evidencia_' . time() . '_' . uniqid() . '.' . $extension;
-                $rutaDestino = $uploadDir . $nuevoNombre;
-
-                if (move_uploaded_file($tmpName, $rutaDestino)) {
+                if (move_uploaded_file($tmpName, $uploadDir . $nuevoNombre)) {
                     $nombres_guardados[] = $nuevoNombre;
                 }
             }
         }
+        finfo_close($finfo);
     }
 
-    // Convertimos el arreglo de nombres a un formato JSON ["archivo1.jpg", "archivo2.pdf"] 
-    // Si no subió nada, lo dejamos en NULL
     $evidence_json = empty($nombres_guardados) ? null : json_encode($nombres_guardados);
 
-
-    // 5. Iniciar Transacción en Base de Datos
     mysqli_begin_transaction($conn);
 
-    // 6. Insertar el Ticket (Añadimos la nueva columna 'evidence')
     $sqlInsert = "INSERT INTO ticket (usuario_creador_id, sucursal_id, area_id, titulo, descripcion, prioridad, estado, nivel_incidencia_id, evidence) VALUES (?, ?, ?, ?, ?, ?, 'Abierto', ?, ?)";
     $stmtInsert = mysqli_prepare($conn, $sqlInsert);
-    
-    // Bind Param (Añadimos una 's' al final para el json de evidencia)
     mysqli_stmt_bind_param($stmtInsert, "iiisssis", $userId, $sucursal_id, $area_id, $titulo, $descripcion, $prioridad, $nivel_incidencia_id, $evidence_json);
-    
-    if (!mysqli_stmt_execute($stmtInsert)) {
-        throw new Exception("Error al guardar el ticket: " . mysqli_error($conn));
-    }
-    
+    mysqli_stmt_execute($stmtInsert);
     $ticketId = mysqli_insert_id($conn); 
     mysqli_stmt_close($stmtInsert);
 
-    // 7. Obtener el folio generado por el Trigger
-    $resFolio = mysqli_query($conn, "SELECT folio FROM ticket WHERE id = $ticketId");
-    $folioRow = mysqli_fetch_assoc($resFolio);
+    // CORRECCIÓN: Sentencia preparada para obtener el folio (Evita Inyección SQL)
+    $stmtFolio = mysqli_prepare($conn, "SELECT folio FROM ticket WHERE id = ?");
+    mysqli_stmt_bind_param($stmtFolio, "i", $ticketId);
+    mysqli_stmt_execute($stmtFolio);
+    $folioRow = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtFolio));
     $folioGenerado = $folioRow['folio'];
+    mysqli_stmt_close($stmtFolio);
 
-    // 8. Insertar en el Historial del Ticket
-    $descHistorial = "Nuevo de ticket. Prioridad: $prioridad. Área destino ID: $area_id.";
-    $sqlHistorial = "INSERT INTO ticket_historial (ticket_id, usuario_responsable_id, tipo_movimiento, descripcion_evento) VALUES (?, ?, 'Creación', ?)";
-    $stmtHist = mysqli_prepare($conn, $sqlHistorial);
+    $descHistorial = "Nuevo ticket creado.";
+    $stmtHist = mysqli_prepare($conn, "INSERT INTO ticket_historial (ticket_id, usuario_responsable_id, tipo_movimiento, descripcion_evento) VALUES (?, ?, 'Creación', ?)");
     mysqli_stmt_bind_param($stmtHist, "iis", $ticketId, $userId, $descHistorial);
     mysqli_stmt_execute($stmtHist);
-    mysqli_stmt_close($stmtHist);
 
-    // Confirmar transacción
     mysqli_commit($conn);
-
-    echo json_encode([
-        'success' => true,
-        'message' => 'Ticket creado con éxito.',
-        'ticket_id' => $ticketId,
-        'folio' => $folioGenerado
-    ]);
+    echo json_encode(['success' => true, 'folio' => $folioGenerado]);
 
 } catch (Exception $e) {
-    mysqli_rollback($conn);
+    if(isset($conn)) mysqli_rollback($conn);
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
 ?>
