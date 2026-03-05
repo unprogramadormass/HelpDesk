@@ -210,7 +210,6 @@ $iniciales = substr($iniciales, 0, 2); // Máximo 2 letras
                         <span id="db-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span id="db-dot" class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                     </span>
-                    
                 </div>
             </div>
             <div class="h-10 border-b border-slate-100 dark:border-slate-800 flex items-center text-slate-500 dark:text-slate-400 shrink-0 theme-trans">

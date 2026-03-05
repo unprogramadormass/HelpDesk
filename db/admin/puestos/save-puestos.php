@@ -4,15 +4,19 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL);
 header('Content-Type: application/json');
 
+// SEGURIDAD: Solo Administradores
+session_start();
+require_once '../../security/validacion.php';
+verificarAcceso([1]); 
+
 try {
-    if (!file_exists('../../conexion.php')) throw new Exception("No se encuentra conexion.php");
     require_once '../../conexion.php'; 
     $conn = getDatabaseConnection();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $input = json_decode(file_get_contents('php://input'), true);
-        $id = $input['id'] ?? '';
-        $nombre = $input['nombre'] ?? '';
+        $id = isset($input['id']) ? (int)$input['id'] : ''; // Sanitización a INT
+        $nombre = trim($input['nombre'] ?? ''); // Sanitizar espacios
 
         if (empty($nombre)) {
             echo json_encode(['success' => false, 'message' => 'El nombre del puesto es obligatorio.']);
@@ -20,13 +24,11 @@ try {
         }
 
         if (!empty($id)) {
-            // EDITAR
             $sql = "UPDATE puesto SET nombre=? WHERE id=?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("si", $nombre, $id);
             $msg = 'Puesto actualizado correctamente.';
         } else {
-            // CREAR
             $sql = "INSERT INTO puesto (nombre, fecha_creacion) VALUES (?, NOW())";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $nombre);

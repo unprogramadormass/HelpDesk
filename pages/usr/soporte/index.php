@@ -1,7 +1,21 @@
 <?php
 require_once(__DIR__ . '/../../../db/security/validacion.php'); 
 verificarAcceso([3]);
-session_start(); // ¡Esta línea es la magia que recuerda quién eres!
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$db_name_actual = $_SESSION['db_name'] ?? 'Desconocida';
+$codigo_emp_actual = $_SESSION['codigo_empresa'] ?? 'N/A';
+$nombre_empresa = $_SESSION['nombre_empresa'] ?? 'Empresa';
+
+// Generar iniciales (Ej: "San Pablo" -> "SP")
+$palabras = explode(" ", $nombre_empresa);
+$iniciales = "";
+foreach ($palabras as $p) {
+    if (strlen($p) > 0) $iniciales .= strtoupper($p[0]);
+}
+$iniciales = substr($iniciales, 0, 2); // Máximo 2 letras
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -98,13 +112,17 @@ session_start(); // ¡Esta línea es la magia que recuerda quién eres!
         <!-- Incia Menu Hamburguesa -->
         <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-30 bg-white dark:bg-darksidebar border-r border-slate-200 dark:border-slate-800 flex flex-col shadow-xl flex-shrink-0 w-64 transform -translate-x-full md:translate-x-0 h-full theme-trans overflow-hidden transition-all duration-300">
     
-            <div class="h-16 flex items-center border-b border-slate-100 dark:border-slate-800 shrink-0">
+           <div class="h-16 flex items-center border-b border-slate-100 dark:border-slate-800 shrink-0">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center">
-                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xs shadow-md text-white">CPSP</div>
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xs shadow-md text-white">
+                        <?= $iniciales ?>
+                    </div>
                 </div>
-                <div class="sidebar-text overflow-hidden">
-                    <h1 class="font-bold text-lg tracking-tight text-slate-800 dark:text-slate-100">HelpDesk</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">San Pablo</p>
+                <div class="sidebar-text overflow-hidden pr-2">
+                    <h1 class="font-bold text-lg tracking-tight text-slate-800 dark:text-slate-100 truncate w-full">HelpDesk</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate w-full" title="<?= htmlspecialchars($nombre_empresa) ?>">
+                        <?= htmlspecialchars($nombre_empresa) ?>
+                    </p>
                 </div>
             </div>
 
@@ -135,11 +153,18 @@ session_start(); // ¡Esta línea es la magia que recuerda quién eres!
             
             <div class="h-10 border-t border-slate-100 dark:border-slate-800 flex items-center text-slate-500 dark:text-slate-400 shrink-0 theme-trans">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center"><i class="fas fa-server text-[10px]"></i></div>
-                <div class="sidebar-text"><p class="text-[10px]">Server: San Pablo</p></div>
+                <div class="sidebar-text flex-1 flex items-center justify-between pr-4 overflow-hidden">
+                    <p class="text-[10px] truncate" title="<?= htmlspecialchars($db_name_actual) ?>">DB: <?= htmlspecialchars($db_name_actual) ?></p>
+                    
+                    <span class="relative flex h-2 w-2 ml-2" id="db-status-container" title="Conexión Estable">
+                        <span id="db-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span id="db-dot" class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                </div>
             </div>
             <div class="h-10 border-b border-slate-100 dark:border-slate-800 flex items-center text-slate-500 dark:text-slate-400 shrink-0 theme-trans">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center"><i class="fas fa-id-card text-[10px]"></i></div>
-                <div class="sidebar-text"><p class="text-[10px]">Lic: XAHG-53VW</p></div>
+                <div class="sidebar-text"><p class="text-[10px]">Lic: <?= htmlspecialchars($codigo_emp_actual) ?></p></div>
             </div>
             <div onclick="confirmLogout()" class="h-16 flex items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 shrink-0 theme-trans">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center"><i class="fas fa-sign-out-alt text-lg"></i></div>
