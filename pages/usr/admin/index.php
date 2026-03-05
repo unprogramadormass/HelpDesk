@@ -1,6 +1,19 @@
 <?php
 require_once(__DIR__ . '/../../../db/security/validacion.php');
 verificarAcceso([1, 2]); 
+
+$db_name_actual = $_SESSION['db_name'] ?? 'Desconocida';
+$codigo_emp_actual = $_SESSION['codigo_empresa'] ?? 'N/A';
+$nombre_empresa = $_SESSION['nombre_empresa'] ?? 'Empresa';
+
+// Generar iniciales (Ej: "San Pablo" -> "SP")
+$palabras = explode(" ", $nombre_empresa);
+$iniciales = "";
+foreach ($palabras as $p) {
+    if (strlen($p) > 0) $iniciales .= strtoupper($p[0]);
+}
+$iniciales = substr($iniciales, 0, 2); // Máximo 2 letras
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -114,11 +127,15 @@ verificarAcceso([1, 2]);
     
             <div class="h-16 flex items-center border-b border-slate-100 dark:border-slate-800 shrink-0">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center">
-                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xs shadow-md text-white">GG</div>
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xs shadow-md text-white">
+                        <?= $iniciales ?>
+                    </div>
                 </div>
-                <div class="sidebar-text overflow-hidden">
-                    <h1 class="font-bold text-lg tracking-tight text-slate-800 dark:text-slate-100">HelpDesk</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Name Enterprise</p>
+                <div class="sidebar-text overflow-hidden pr-2">
+                    <h1 class="font-bold text-lg tracking-tight text-slate-800 dark:text-slate-100 truncate w-full">HelpDesk</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate w-full" title="<?= htmlspecialchars($nombre_empresa) ?>">
+                        <?= htmlspecialchars($nombre_empresa) ?>
+                    </p>
                 </div>
             </div>
 
@@ -186,11 +203,19 @@ verificarAcceso([1, 2]);
             
             <div class="h-10 border-t border-slate-100 dark:border-slate-800 flex items-center text-slate-500 dark:text-slate-400 shrink-0 theme-trans">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center"><i class="fas fa-server text-[10px]"></i></div>
-                <div class="sidebar-text"><p class="text-[10px]">Server: Name Enterprise</p></div>
+                <div class="sidebar-text flex-1 flex items-center justify-between pr-4 overflow-hidden">
+                    <p class="text-[10px] truncate" title="<?= htmlspecialchars($db_name_actual) ?>">DB: <?= htmlspecialchars($db_name_actual) ?></p>
+                    
+                    <span class="relative flex h-2 w-2 ml-2" id="db-status-container" title="Conexión Estable">
+                        <span id="db-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span id="db-dot" class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    
+                </div>
             </div>
             <div class="h-10 border-b border-slate-100 dark:border-slate-800 flex items-center text-slate-500 dark:text-slate-400 shrink-0 theme-trans">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center"><i class="fas fa-id-card text-[10px]"></i></div>
-                <div class="sidebar-text"><p class="text-[10px]">Lic: Code Enterprise</p></div>
+                <div class="sidebar-text"><p class="text-[10px]">Lic: <?= htmlspecialchars($codigo_emp_actual) ?></p></div>
             </div>
             <div onclick="confirmLogout()" class="h-16 flex items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 shrink-0 theme-trans">
                 <div class="w-20 flex-shrink-0 flex justify-center items-center"><i class="fas fa-sign-out-alt text-lg"></i></div>
@@ -1715,6 +1740,44 @@ verificarAcceso([1, 2]);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script>
+        // Monitoreo de conexión a la Base de Datos
+        setInterval(function() {
+            // Hacemos una petición ligera a cualquier archivo que use BD (ej. get_dashboard_stats.php o conexion.php)
+            // Si el servidor o la BD caen, esto dará error.
+            fetch('/helpdesk/db/conexion.php', { method: 'HEAD', cache: 'no-store' })
+            .then(response => {
+                if (response.ok) {
+                    setConnectionStatus('online');
+                } else {
+                    setConnectionStatus('offline');
+                }
+            })
+            .catch(() => {
+                setConnectionStatus('offline'); // Si hay error de red
+            });
+        }, 15000); // Comprueba cada 15 segundos
+
+        function setConnectionStatus(status) {
+            const ping = document.getElementById('db-ping');
+            const dot = document.getElementById('db-dot');
+            const container = document.getElementById('db-status-container');
+
+            if (status === 'online') {
+                ping.classList.remove('hidden', 'bg-red-400', 'bg-yellow-400');
+                ping.classList.add('bg-green-400');
+                dot.classList.remove('bg-red-500', 'bg-yellow-500');
+                dot.classList.add('bg-green-500');
+                container.title = "Conexión Estable";
+            } else {
+                // Si se pierde la conexión, quitamos la animación de ping y lo ponemos rojo
+                ping.classList.add('hidden'); 
+                dot.classList.remove('bg-green-500');
+                dot.classList.add('bg-red-500');
+                container.title = "Sin conexión a la Base de Datos";
+            }
+        }
+    </script>
   
 
     <script>

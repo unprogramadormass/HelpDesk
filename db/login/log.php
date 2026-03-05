@@ -3,6 +3,8 @@ ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
+require_once(__DIR__ . '/../load_env.php');
+
 // 1. CARGAR LIBRERÍAS DE PHPMAILER
 require_once(__DIR__ . '/../../db/libs/PHPMailer/src/Exception.php');
 require_once(__DIR__ . '/../../db/libs/PHPMailer/src/PHPMailer.php');
@@ -10,13 +12,6 @@ require_once(__DIR__ . '/../../db/libs/PHPMailer/src/SMTP.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
-require_once(__DIR__ . '/../../db/conexion.php');
-
-if (!$conn) {
-    http_response_code(500);
-    die(json_encode(['success' => false, 'error' => 'Error de conexión a la base de datos']));
-}
 
 // --- FUNCIÓN PARA OBTENER UBICACIÓN ---
 function obtenerUbicacionPorIP($ip) {
@@ -35,18 +30,18 @@ function obtenerUbicacionPorIP($ip) {
 // --- FUNCIÓN PARA ENVIAR CORREO ---
 function enviarAlertaCorreo($emailDestino, $nombreUsuario, $dispositivo, $ubicacion, $ip) {
     $mail = new PHPMailer(true);
-
     try {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'helpdeskcpsp@gmail.com';
-        $mail->Password   = 'xdsvmcxizlywhxmn'; // Tu contraseña de aplicación
+        // USAMOS EL .ENV AQUÍ:
+        $mail->Username   = $_ENV['MAIL_USER']; 
+        $mail->Password   = $_ENV['MAIL_PASS'];       
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
-        $mail->setFrom('helpdeskcpsp@gmail.com', 'Seguridad HelpDesk');
+        $mail->setFrom($_ENV['MAIL_USER'], 'Seguridad HelpDesk');
         $mail->addAddress($emailDestino, $nombreUsuario);
 
         $mail->isHTML(true);
@@ -76,46 +71,84 @@ function enviarAlertaCorreo($emailDestino, $nombreUsuario, $dispositivo, $ubicac
                 <div class='content'>
                     <h2 style='margin-top:0; color:#1e293b;'>Hola, {$nombreUsuario}</h2>
                     <p>Se ha detectado un nuevo acceso a tu cuenta de HelpDesk en un dispositivo o ubicación no registrados previamente.</p>
-                    
                     <div class='details'>
                         <p><strong>🕒 Fecha:</strong> {$fecha}</p>
                         <p><strong>📱 Dispositivo:</strong> {$dispositivo}</p>
                         <p><strong>📍 Ubicación:</strong> {$ubicacion}</p>
                         <p><strong>🌐 IP:</strong> {$ip}</p>
                     </div>
-
                     <div class='alert-box'>
                         <strong style='color:#1e40af;'>¿Fuiste tú?</strong><br>
                         Si fuiste tú, puedes ignorar este correo. Si no reconoces esta actividad, por favor contacta al administrador de TI inmediatamente.
                     </div>
                 </div>
                 <div class='footer'>
-                    &copy; " . date('Y') . " HelpDesk System - Caja San Pablo
+                    &copy; " . date('Y') . " HelpDesk System
                 </div>
             </div>
         </body>
-        </html>
-        ";
-        
+        </html>";
         $mail->AltBody = "Nuevo inicio de sesión detectado.\nFecha: $fecha\nDispositivo: $dispositivo\nIP: $ip\nSi no fuiste tú, contacta a soporte.";
-
         $mail->send();
     } catch (Exception $e) {
         error_log("No se pudo enviar el correo. Mailer Error: {$mail->ErrorInfo}");
     }
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
+    $codigo_empresa = trim($_POST['codigo_empresa'] ?? '');
     $username = trim(filter_input(INPUT_POST, 'usern', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH));
     $password = $_POST['pass'] ?? '';
     
-    if (empty($username) || empty($password)) {
+    if (empty($codigo_empresa) || empty($username) || empty($password)) {
         die(json_encode(['success' => false, 'error' => 'Por favor, completa todos los campos']));
     }
 
-    // Consulta para traer los datos del usuario
+    // =========================================================================
+    // FASE 1: VALIDAR EMPRESA EN LA BASE DE DATOS MAESTRA
+    // =========================================================================
+    // FASE 1: CONEXIÓN A MAESTRA Y DEFENSA CONTRA FUERZA BRUTA
+    $master_conn = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_MASTER'], $_ENV['DB_PORT']);
+    
+    if ($master_conn->connect_error) {
+        die(json_encode(['success' => false, 'error' => 'Error de servidor central.']));
+    }
+    $master_conn->set_charset("utf8");
+
+    // AQUÍ AGREGAMOS nombre_empresa A LA CONSULTA
+    $sql_empresa = "SELECT db_name, activation, nombre_empresa FROM empresas WHERE codigo_empresa = ?";
+    $stmt_empresa = mysqli_prepare($master_conn, $sql_empresa);
+    mysqli_stmt_bind_param($stmt_empresa, "s", $codigo_empresa);
+    mysqli_stmt_execute($stmt_empresa);
+    $res_empresa = mysqli_stmt_get_result($stmt_empresa);
+
+    if (!$res_empresa || mysqli_num_rows($res_empresa) !== 1) {
+        $master_conn->close();
+        die(json_encode(['success' => false, 'error' => 'Código de empresa no válido.']));
+    }
+
+    $empresa = mysqli_fetch_assoc($res_empresa);
+    
+    if ($empresa['activation'] != 1) {
+        $master_conn->close();
+        die(json_encode(['success' => false, 'error' => 'Su empresa se encuentra inactiva. Contacte a soporte.']));
+    }
+
+    $tenant_db = $empresa['db_name'];
+    $nombre_empresa = $empresa['nombre_empresa']; // Guardamos el nombre en una variable
+    
+    $master_conn->close(); // Cerramos la maestra, ya tenemos los datos que ocupamos
+
+    // =========================================================================
+    // FASE 2: CONECTAR A LA BD DEL CLIENTE Y VALIDAR USUARIO
+    // =========================================================================
+    $conn = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $tenant_db, $_ENV['DB_PORT']);    if ($conn->connect_error) {
+        die(json_encode(['success' => false, 'error' => 'Error al conectar con la instancia de su empresa.']));
+    }
+    $conn->set_charset("utf8");
+
+    // Consulta de usuario
     $sql = "SELECT u.id, u.username, u.password, u.email, u.firstname, u.firstapellido, u.tipo_usuario, u.requiere_cambio_password, u.connected, r.redirect_url 
             FROM usuarios u
             INNER JOIN roles r ON u.tipo_usuario = r.id
@@ -127,23 +160,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = mysqli_stmt_get_result($stmt);
 
     if (!$result || mysqli_num_rows($result) !== 1) {
-        die(json_encode(['success' => false, 'error' => 'Usuario no encontrado']));
+        $conn->close();
+        die(json_encode(['success' => false, 'error' => 'Usuario o contraseña incorrectos']));
     }
 
     $user = mysqli_fetch_assoc($result);
     
     if (!password_verify($password, $user['password'])) {
-        die(json_encode(['success' => false, 'error' => 'Contraseña incorrecta']));
+        $conn->close();
+        die(json_encode(['success' => false, 'error' => 'Usuario o contraseña incorrectos']));
     }
 
-    // Actualizar estado de conexión
+    // Actualizar estado de conexión a 1 (En línea)
     $updateStmt = mysqli_prepare($conn, "UPDATE usuarios SET connected = 1 WHERE id = ?");
     mysqli_stmt_bind_param($updateStmt, "i", $user['id']);
     mysqli_stmt_execute($updateStmt);
 
-    // Configurar Sesión
+    // =========================================================================
+    // FASE 3: GUARDAR SESIÓN (INCLUYENDO LA BASE DE DATOS Y NOMBRE DE EMPRESA)
+    // =========================================================================
     session_regenerate_id(true);
     $token = session_id(); 
+    
+    // VARIABLES VITALES PARA EL SAAS:
+    $_SESSION['codigo_empresa'] = $codigo_empresa;
+    $_SESSION['db_name']        = $tenant_db; 
+    $_SESSION['nombre_empresa'] = $nombre_empresa; // <--- AQUÍ GUARDAMOS EL NOMBRE
+    
     $_SESSION['id_usuario'] = $user['id']; 
     $_SESSION['user_id'] = $user['id']; 
     $_SESSION['username'] = $user['username'];
@@ -151,29 +194,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['token_sesion'] = $token; 
     $_SESSION['last_activity'] = time();
 
-    // -------------------------------------------------------------------------
-    // LOGICA DE SEGURIDAD Y REGISTRO DE SESIÓN
-    // -------------------------------------------------------------------------
+    // =========================================================================
+    // FASE 4: SEGURIDAD Y REGISTRO DE SESIÓN
+    // =========================================================================
     try {
-        // 1. Obtener y corregir la IP local
         $ip = $_SERVER['REMOTE_ADDR'];
-        if ($ip === '::1') {
-            $ip = '127.0.0.1';
-        }
+        if ($ip === '::1') { $ip = '127.0.0.1'; }
 
-        // 2. Obtener la huella del dispositivo (User Agent completo)
         $userAgentCompleto = isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 255) : 'Desconocido';
-        
-        // 3. Etiqueta amigable para correo/interfaz
-        $tipoDispositivo = "PC";
-        if (strpos($userAgentCompleto, 'Mobile') !== false) {
-            $tipoDispositivo = "Móvil";
-        }
-        
+        $tipoDispositivo = (strpos($userAgentCompleto, 'Mobile') !== false) ? "Móvil" : "PC";
         $ubicacion = obtenerUbicacionPorIP($ip);
 
-        // 4. VERIFICAR SI ESTA IP Y NAVEGADOR YA SON CONOCIDOS
-        $esNuevaConexion = true; // Por defecto es nuevo
+        $esNuevaConexion = true; 
         
         $sqlCheck = "SELECT id FROM sesiones_activas WHERE usuario_id = ? AND ip_address = ? AND user_agent = ? LIMIT 1";
         $stmtCheck = mysqli_prepare($conn, $sqlCheck);
@@ -181,19 +213,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($stmtCheck);
         mysqli_stmt_store_result($stmtCheck);
         
-        // Si hay un registro previo, ya no es una conexión nueva
         if (mysqli_stmt_num_rows($stmtCheck) > 0) {
             $esNuevaConexion = false;
         }
         mysqli_stmt_close($stmtCheck);
 
-        // 5. REGISTRAR LA NUEVA SESIÓN (Incluyendo el User-Agent)
         $sqlInsertSession = "INSERT INTO sesiones_activas (usuario_id, token_sesion, ip_address, dispositivo, user_agent, ubicacion, activo) VALUES (?, ?, ?, ?, ?, ?, 1)";
         $stmtSession = mysqli_prepare($conn, $sqlInsertSession);
         mysqli_stmt_bind_param($stmtSession, "isssss", $user['id'], $token, $ip, $tipoDispositivo, $userAgentCompleto, $ubicacion);
         mysqli_stmt_execute($stmtSession);
 
-        // 6. ENVIAR CORREO SOLO SI ES NUEVA CONEXIÓN
         if ($esNuevaConexion && !empty($user['email'])) {
             $nombreCompleto = $user['firstname'] . " " . $user['firstapellido'];
             enviarAlertaCorreo($user['email'], $nombreCompleto, $tipoDispositivo, $ubicacion, $ip);
@@ -202,6 +231,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) { 
         error_log($e->getMessage()); 
     }
+
+    $conn->close();
 
     // Redireccionar
     $redirectUrl = ($user['requiere_cambio_password'] == 1) ? '/helpdesk/pages/auth/pass/changepass.html' : ($user['redirect_url'] ?? '/helpdesk/pages/usr/user/index.php');

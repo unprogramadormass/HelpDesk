@@ -1,2 +1,8 @@
 # Desactivar el listado de directorios por seguridad
 Options -Indexes
+
+# Bloquear acceso al archivo .env
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
