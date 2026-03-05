@@ -1,11 +1,22 @@
 <?php
-// guardar_usuario.php
+// db/admin/usuarios/save-usuario.php
 ini_set('display_errors', 0);
 header('Content-Type: application/json; charset=utf-8');
+
+// ============================================================================
+// 1. SEGURIDAD: Iniciar sesión y validar que SOLO el administrador pueda acceder
+// ============================================================================
+session_start();
+require_once '../../security/validacion.php';
+verificarAcceso([1]); // Asumiendo que 1 es el ID del rol Administrador
+
+// ============================================================================
+// 2. CARGAR VARIABLES DE ENTORNO Y CONEXIÓN
+// ============================================================================
+require_once '../../load_env.php';
 require_once '../../conexion.php'; 
 
 // --- CARGAR LIBRERÍAS DE PHPMAILER ---
-// Asegúrate de que esta ruta sea correcta dependiendo de dónde esté tu archivo guardar_usuario.php
 require_once(__DIR__ . '/../../libs/PHPMailer/src/Exception.php');
 require_once(__DIR__ . '/../../libs/PHPMailer/src/PHPMailer.php');
 require_once(__DIR__ . '/../../libs/PHPMailer/src/SMTP.php');
@@ -21,13 +32,14 @@ function enviarCorreoBienvenida($emailDestino, $nombreUsuario, $usernameAcceso, 
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'helpdeskcpsp@gmail.com';
-        $mail->Password   = 'xdsvmcxizlywhxmn'; // Tu contraseña de aplicación
+        // SEGURIDAD: Uso de variables de entorno en lugar de texto plano
+        $mail->Username   = $_ENV['MAIL_USER'];
+        $mail->Password   = $_ENV['MAIL_PASS']; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
-        $mail->setFrom('helpdeskcpsp@gmail.com', 'HelpDesk - Caja San Pablo');
+        $mail->setFrom($_ENV['MAIL_USER'], 'HelpDesk - Sistema');
         $mail->addAddress($emailDestino, $nombreUsuario);
 
         $mail->isHTML(true);
@@ -56,7 +68,7 @@ function enviarCorreoBienvenida($emailDestino, $nombreUsuario, $usernameAcceso, 
                 </div>
                 <div class='content'>
                     <h2 style='margin-top:0; color:#1e293b;'>Hola, {$nombreUsuario}</h2>
-                    <p>Tu cuenta en el sistema HelpDesk de Caja San Pablo ha sido creada exitosamente. A continuación, te proporcionamos tus credenciales de acceso:</p>
+                    <p>Tu cuenta en el sistema HelpDesk ha sido creada exitosamente. A continuación, te proporcionamos tus credenciales de acceso:</p>
                     
                     <div class='credentials-box'>
                         <p><strong>Usuario:</strong> {$usernameAcceso}</p>
@@ -68,7 +80,7 @@ function enviarCorreoBienvenida($emailDestino, $nombreUsuario, $usernameAcceso, 
                     </div>
                 </div>
                 <div class='footer'>
-                    &copy; " . date('Y') . " HelpDesk System - Caja San Pablo
+                    &copy; " . date('Y') . " HelpDesk System
                 </div>
             </div>
         </body>
@@ -83,14 +95,14 @@ function enviarCorreoBienvenida($emailDestino, $nombreUsuario, $usernameAcceso, 
     }
 }
 
-$conn = getDatabaseConnection(); // Asegúrate de que esta función exista en tu conexion.php
+$conn = getDatabaseConnection(); 
 
 try {
     // Leer JSON (incluye checkboxes como array)
     $input = json_decode(file_get_contents('php://input'), true);
 
-    // Datos Básicos
-    $id = $input['id'] ?? ''; // Para editar
+    // Datos Básicos (Casteamos el id a entero por seguridad extra)
+    $id = !empty($input['id']) ? (int)$input['id'] : ''; 
     $firstname = $input['firstname'] ?? '';
     $secondname = $input['secondname'] ?? '';
     $firstapellido = $input['firstapellido'] ?? '';
@@ -101,7 +113,7 @@ try {
     
     // Acceso
     $username = $input['username'] ?? '';
-    $password = $input['password'] ?? ''; // Solo si cambia o es nuevo
+    $password = $input['password'] ?? ''; 
     
     // IDs de Relación
     $rol_id = $input['rol_id'] ?? null;
@@ -136,17 +148,25 @@ try {
         if (!$stmt->execute()) throw new Exception("Error al actualizar usuario: " . $stmt->error);
         $stmt->close();
 
-        // Si hay password nuevo, actualizarlo aparte (hashing recomendado)
+        // SEGURIDAD: Inyección SQL parcheada con sentencias preparadas
         if (!empty($password)) {
             $passHash = password_hash($password, PASSWORD_DEFAULT);
-            $conn->query("UPDATE usuarios SET password='$passHash' WHERE id=$id");
+            $stmtPass = $conn->prepare("UPDATE usuarios SET password=? WHERE id=?");
+            $stmtPass->bind_param("si", $passHash, $id);
+            $stmtPass->execute();
+            $stmtPass->close();
         }
 
-        // Actualizar Permisos (Borrar viejos)
-        $conn->query("DELETE FROM usuario_permisos WHERE usuario_id=$id");
+        // SEGURIDAD: Eliminar permisos y áreas con sentencias preparadas para evitar Inyección SQL
+        $stmtDelPerm = $conn->prepare("DELETE FROM usuario_permisos WHERE usuario_id=?");
+        $stmtDelPerm->bind_param("i", $id);
+        $stmtDelPerm->execute();
+        $stmtDelPerm->close();
         
-        // Actualizar Áreas (Borrar viejas)
-        $conn->query("DELETE FROM usuario_areas WHERE usuario_id=$id");
+        $stmtDelArea = $conn->prepare("DELETE FROM usuario_areas WHERE usuario_id=?");
+        $stmtDelArea->bind_param("i", $id);
+        $stmtDelArea->execute();
+        $stmtDelArea->close();
 
         $userId = $id;
 

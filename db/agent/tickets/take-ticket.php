@@ -1,6 +1,9 @@
 <?php
 session_start();
 header('Content-Type: application/json; charset=utf-8');
+
+// 1. CARGAMOS LAS VARIABLES DE ENTORNO PARA OCULTAR LA CONTRASEÑA
+require_once '../../load_env.php';
 require_once '../../conexion.php'; 
 
 // --- CARGAR LIBRERÍAS DE PHPMAILER ---
@@ -25,13 +28,14 @@ function enviarCorreoAsignacion($emailDestino, $nombreUsuario, $folioTicket, $ti
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'helpdeskcpsp@gmail.com';
-        $mail->Password   = 'xdsvmcxizlywhxmn'; 
+        // SEGURIDAD: Usamos las variables del archivo .env
+        $mail->Username   = $_ENV['MAIL_USER'];
+        $mail->Password   = $_ENV['MAIL_PASS']; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
-        $mail->setFrom('helpdeskcpsp@gmail.com', 'HelpDesk San Pablo');
+        $mail->setFrom($_ENV['MAIL_USER'], 'HelpDesk San Pablo');
         $mail->addAddress($emailDestino, $nombreUsuario);
 
         $mail->isHTML(true);
@@ -55,7 +59,7 @@ function enviarCorreoAsignacion($emailDestino, $nombreUsuario, $folioTicket, $ti
                 <p style='font-size: 14px; color: #666;'>El agente se pondrá en contacto contigo a través de este sistema o vía extensión si es necesario.</p>
             </div>
             <div style='background: #f1f5f9; text-align: center; padding: 15px; font-size: 12px; color: #64748b;'>
-                Este es un mensaje automático del Sistema de Tickets - Caja San Pablo
+                Este es un mensaje automático del Sistema de Tickets
             </div>
         </div>";
 
@@ -67,7 +71,7 @@ function enviarCorreoAsignacion($emailDestino, $nombreUsuario, $folioTicket, $ti
 
 try {
     if (isset($_POST['ticket_id'])) {
-        $ticketId = $_POST['ticket_id'];
+        $ticketId = (int)$_POST['ticket_id']; // Forzar entero por seguridad
         $newAgentId = $userId; 
 
         // 1. Obtener datos del ticket, del creador y del agente nuevo
@@ -134,3 +138,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
+?>

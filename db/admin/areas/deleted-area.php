@@ -1,14 +1,19 @@
 <?php
 header('Content-Type: application/json');
-require_once '../../conexion.php';
+session_start();
 
+// SEGURIDAD: Evitar que alguien borre áreas sin ser Administrador
+require_once '../../security/validacion.php';
+verificarAcceso([1]); // Solo Administradores pueden ejecutar esto
+
+require_once '../../conexion.php';
 $conn = getDatabaseConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
-    $id = $input['id'] ?? '';
+    $id = isset($input['id']) ? (int)$input['id'] : 0; // Forzamos a que sea un número
 
-    if (empty($id)) {
+    if (empty($id) || $id <= 0) {
         echo json_encode(['success' => false, 'message' => 'ID no válido.']);
         exit;
     }

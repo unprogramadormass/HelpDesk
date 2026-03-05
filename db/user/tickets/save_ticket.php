@@ -36,21 +36,16 @@ try {
     }
 
     // ==========================================
-    // 4. LÓGICA DE SUBIDA DE ARCHIVOS MÚLTIPLES
+    // 4. LÓGICA SECURE DE SUBIDA DE ARCHIVOS
     // ==========================================
-    $nombres_guardados = []; // Aquí almacenaremos los nombres finales de los archivos
+    $nombres_guardados = []; 
     
-    // Verificamos si se enviaron archivos y si no están vacíos
     if (isset($_FILES['evidencia']) && !empty($_FILES['evidencia']['name'][0])) {
-        
-        // Ruta absoluta a la carpeta helpdesk/uploads/ (ajusta los ../ según donde esté este script)
         $uploadDir = __DIR__ . '/../../../uploads/'; 
-        
-        // Si la carpeta no existe, la creamos con permisos
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
+        if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
 
+        // Lista Blanca de tickets
+        $extPermitidas = ['jpg', 'jpeg', 'png', 'pdf', 'docx', 'xlsx', 'csv'];
         $cantidad_archivos = count($_FILES['evidencia']['name']);
         
         for ($i = 0; $i < $cantidad_archivos; $i++) {
@@ -58,18 +53,17 @@ try {
                 
                 $nombreOriginal = $_FILES['evidencia']['name'][$i];
                 $tmpName = $_FILES['evidencia']['tmp_name'][$i];
-                
-                // Extraer la extensión del archivo original (ej: pdf, jpg)
                 $extension = strtolower(pathinfo($nombreOriginal, PATHINFO_EXTENSION));
                 
-                // Generar un nombre ÚNICO: "evidencia_timestamp_idAleatorio.extensión"
+                // VERIFICACIÓN DE SEGURIDAD (Evitar RCE)
+                if (!in_array($extension, $extPermitidas)) {
+                    throw new Exception("El archivo '$nombreOriginal' no tiene un formato permitido.");
+                }
+
                 $nuevoNombre = 'evidencia_' . time() . '_' . uniqid() . '.' . $extension;
-                
                 $rutaDestino = $uploadDir . $nuevoNombre;
 
-                // Mover el archivo de la memoria temporal a la carpeta final
                 if (move_uploaded_file($tmpName, $rutaDestino)) {
-                    // Si se subió con éxito, guardamos solo el nombre del archivo en nuestro arreglo
                     $nombres_guardados[] = $nuevoNombre;
                 }
             }
